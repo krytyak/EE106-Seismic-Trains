@@ -1,0 +1,24 @@
+import pandas as pd
+import obspy
+import numpy as np
+
+def geostats(stream):
+    for i in range(len(stream)):
+        stream[i].stats.sampling_rate
+        stream[i].stats.sampling_rate = 135
+        stream[i].stats.starttime = df['time'][0]
+    return
+csv_file_path="C://Users/Владелец/Desktop/geophone_data.csv"
+df = pd.read_csv(csv_file_path)
+#Removes all the NaN Rows and Columns
+df = df.dropna()
+array_x = df['geophone_x'].to_numpy()
+array_y = df['geophone_y'].to_numpy()
+array_z =df['geophone_z'].to_numpy()
+tr1 = obspy.Trace(data=array_x)
+tr2 = obspy.Trace(data=array_y)
+tr3 = obspy.Trace(data=array_z)
+st = obspy.Stream(traces=[tr1, tr2, tr3])
+geostats(st)
+print(st)
+st.plot()
