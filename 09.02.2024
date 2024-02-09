@@ -1,0 +1,37 @@
+import pandas as pd
+import obspy
+import numpy as np
+from obspy.signal.trigger import plot_trigger
+from obspy.signal.trigger import recursive_sta_lta
+
+def geostats(stream):
+    for i in range(len(stream)):
+        stream[i].stats.delta = (last_pick-first_pick)
+        stream[i].stats.sampling_rate = (len(array_x)/(last_pick-first_pick))
+        stream[i].stats.starttime=first_pick    
+    return
+df = pd.read_csv('geophone_data.csv')
+#Removes all the NaN Rows and Columns
+df = df.dropna()
+array_x = df['geophone_x'].to_numpy()
+array_y = df['geophone_y'].to_numpy()
+array_z =df['geophone_z'].to_numpy()
+time_list =df['time'].to_numpy()
+first_pick = obspy.UTCDateTime(time_list[0])
+last_pick = obspy.UTCDateTime(time_list[-1])
+tr1 = obspy.Trace(data=array_x)
+tr2 = obspy.Trace(data=array_y)
+tr3 = obspy.Trace(data=array_z)
+st = obspy.Stream(traces=[tr1, tr2, tr3])
+geostats(st)
+freq = tr1.stats.sampling_rate
+tr1.plot()
+tr2.plot()
+tr3.plot()
+cft1 = recursive_sta_lta(tr1.data, int(5*freq), int(10*freq))
+plot_trigger(tr1, cft1, 1.5,1.7)
+cft2 = recursive_sta_lta(tr2.data, int(5*freq), int(10*freq))
+plot_trigger(tr2, cft2, 1.5,1.7)
+cft3 = recursive_sta_lta(tr3.data, int(5*freq), int(10*freq))
+plot_trigger(tr3, cft3, 1.5,1.7)
+
