@@ -1,0 +1,77 @@
+from obspy import Stream, Trace
+from obspy.signal.trigger import trigger_onset
+
+qq=pd.read_csv("geophone_data.csv")
+
+time_list_obs=df['time']
+geo_x_obs=df['geophone_x']
+geo_y_obs=df['geophone_y']
+geo_z_obs=df['geophone_z']
+
+stream1 = Stream()
+trace1 = Trace(data=geo_x_obs.values)
+sampling_rate = (len(array_x)/(last_pick-first_pick))
+trace1.stats.sampling_rate = sampling_rate
+#put trace1 into a stream
+stream1.append(trace1)
+
+#trigger_onset function to find the trigger start and end points
+trigger_x = trigger_onset(stream1[0].data, 0.015, 0.05)
+#shows the arrays where the triggers occur
+seismic_x_times_arrays = [trigger_x[0] for trigger in trigger_x]
+#print("Geophone X times", seismic_x_times_arrays[0])
+seismic_x_times = []
+for trigger_arrays in seismic_x_times_arrays:
+    st_end_times_x = []
+    for f in trigger_arrays:
+        start_time_x = f/sampling_rate
+        end_time_x = (f+1)/sampling_rate
+        st_end_times_x.append((start_time_x, end_time_x))
+    seismic_x_times.append(st_end_times_x)
+print("Geophone X times:", seismic_x_times[0])
+
+stream2 = Stream()
+trace2 = Trace(data=geo_y_obs.values)
+stream2.append(trace2)
+
+trigger_y = trigger_onset(stream2[0].data, 0.015, 0.05)
+#shows the arrays where the triggers occur
+seismic_y_times_arrays = [trigger_y[0] for trigger in trigger_y]
+#print("Geophone Y times", seismic_y_times_arrays[0])
+seismic_y_times = []
+for trigger_arrays in seismic_y_times_arrays:
+    actual_times_y = [(g/sampling_rate) for g in trigger_arrays] #converts arrays to time in seconds
+    seismic_y_times.append(actual_times_y)
+print("Geophone Y times:", seismic_y_times[0])
+
+stream3 = Stream()
+trace3 = Trace(data=geo_y_obs.values)
+stream3.append(trace3)
+
+trigger_z = trigger_onset(stream3[0].data, 0.015, 0.05)
+#shows the arrays where the triggers occur
+seismic_z_times_arrays = [trigger_z[0] for trigger in trigger_z]
+#print("Geophone Z times", seismic_z_times_arrays[0])
+seismic_z_times = []
+for trigger_arrays in seismic_z_times_arrays:
+    actual_times_z = [(h/sampling_rate) for h in trigger_arrays] #converts arrays to time in seconds
+    seismic_z_times.append(actual_times_z)
+print("Geophone Z times:", seismic_z_times[0])
+
+
+##failed attempt below##
+
+#triggers=qq.get_triggers()
+
+#for trigger in triggers:
+   # start_time = trigger['first_pick']
+   # end_time = trigger['last_pick']
+   # print(f"Start Time: {start_time}, End time: {end_time}")
+
+#from obspy.signal.trigger import trigger_onset
+#data = array_x
+
+#thres_arr=df[].to_numpy()
+
+#trig_pts = trigger_onset(data, thres_arr, 'highpass', max_len=5)
+#print(trig_pts)
